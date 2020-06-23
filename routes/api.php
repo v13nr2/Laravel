@@ -23,4 +23,5 @@ Route::post('login', 'UserController@login');
 Route::get('book', 'BookController@book');
 
 Route::get('bookall', 'BookController@bookAuth')->middleware('jwt.verify');
+Route::get('menu_get', 'MenuController@menualll')->middleware('jwt.verify');
 Route::get('user', 'UserController@getAuthenticatedUser')->middleware('jwt.verify');

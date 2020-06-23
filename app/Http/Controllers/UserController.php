@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use DB;
+use Illuminate\Support\Str;
+
 
 class UserController extends Controller
 {
@@ -25,7 +27,7 @@ class UserController extends Controller
         }
 
         //$user = DB::table('users')->get();
-        $user = DB::table('users')->select('id', 'name', 'email')->where('email', request()->email)->first();
+        $user = DB::table('users')->select('uuidx as uuid', 'name', 'email')->where('email', request()->email)->first();
         $res = array(
             'data'  => $user,
             'token' => compact('token')
@@ -45,10 +47,12 @@ class UserController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
+        $unik = Str::uuid()->toString();
         $user = User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
+            'uuidx'  => $unik
         ]);
 
         $token = JWTAuth::fromUser($user);
@@ -79,5 +83,15 @@ class UserController extends Controller
         }
 
         return response()->json(compact('user'));
+    }
+
+    public function guidv4($data)
+    {
+        assert(strlen($data) == 16);
+
+        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 }

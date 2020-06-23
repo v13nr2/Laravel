@@ -25,7 +25,7 @@ class UserController extends Controller
         }
 
         //$user = DB::table('users')->get();
-        $user = DB::table('users')->select('id', 'name')->where('email', request()->email)->first();
+        $user = DB::table('users')->select('id', 'name', 'email')->where('email', request()->email)->first();
         $res = array(
             'data'  => $user,
             'token' => compact('token')

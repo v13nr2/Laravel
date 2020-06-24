@@ -79,7 +79,8 @@ class UserController extends Controller
     public function validator(array $data){ 
 
         return Validator::make($data, [
-             'name' => 'required|max:255', //  Name
+            'uuid' => 'required|max:255',
+            'name' => 'required|max:255', //  Name
              //'email' => 'required|email|max:255|unique:users', // Unique Email id
              //'password' => 'required|min:6', //password min 6 charater
     
@@ -94,16 +95,15 @@ public function update(Request $request)
    $validation = $this->validator($request->all());
 
 
-    $User = User::where('uuidx',$request->uuid)->first(); /* Check id exist in table */
+    $User = User::where('uuidx',request()->uuid)->first(); /* Check id exist in table */
+    
+    //$id2 = Str::slug('6f43adf8 7d65 4f8c 8d09 5cb714327139');
 
-      if(!is_null($User)){
+    if(!is_null($User)){
 
-        $input = $request->all();
-        $name = $input['name'];
-
-        User::where('uuidx',$request->uuid)->update(
+        User::where('uuidx',$request->get("uuid"))->update(
          array(
-                 'name' => $name,
+                 'name' => $request->get("name"),
               )
          );
 

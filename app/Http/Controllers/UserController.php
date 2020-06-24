@@ -46,7 +46,7 @@ class UserController extends Controller
 
 
         //$user = DB::table('users')->get();
-        $user = DB::table('users')->select('uuidx as uuid', 'name', 'email', 'username')->where('id', '<>', 1)->get();
+        $user = DB::table('users')->select('uuidx as uuid', 'name', 'email', 'username', 'refferal_link')->where('id', '<>', 1)->get();
         $res = array(
             'data'  => $user,
         );

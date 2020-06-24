@@ -35,6 +35,19 @@ class UserController extends Controller
         return response()->json($res, 200);
     }
 
+    public function userList(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+
+        //$user = DB::table('users')->get();
+        $user = DB::table('users')->select('uuidx as uuid', 'name', 'email')->where('id', '<>', 1)->get();
+        $res = array(
+            'data'  => $user,
+        );
+        return response()->json($res, 200);
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [

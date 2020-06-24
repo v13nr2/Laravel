@@ -41,7 +41,7 @@ class UserController extends Controller
 
 
         //$user = DB::table('users')->get();
-        $user = DB::table('users')->select('uuidx as uuid', 'name', 'email')->where('id', '<>', 1)->get();
+        $user = DB::table('users')->select('uuidx as uuid', 'name', 'email', 'username')->where('id', '<>', 1)->get();
         $res = array(
             'data'  => $user,
         );
@@ -52,6 +52,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'username' => 'required|string|max:55|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -63,6 +64,7 @@ class UserController extends Controller
         $unik = Str::uuid()->toString();
         $user = User::create([
             'name' => $request->get('name'),
+            'username' => $request->get('username'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
             'uuidx'  => $unik

@@ -75,6 +75,49 @@ class UserController extends Controller
         return response()->json(compact('user','token'),201);
     }
 
+
+    public function validator(array $data){ 
+
+        return Validator::make($data, [
+             'name' => 'required|max:255', //  Name
+             //'email' => 'required|email|max:255|unique:users', // Unique Email id
+             //'password' => 'required|min:6', //password min 6 charater
+    
+         ]);
+      }
+
+
+public function update(Request $request)
+{
+
+ /* Called Validator Method For Validation */  
+   $validation = $this->validator($request->all());
+
+
+    $User = User::where('uuidx',$request->uuid)->first(); /* Check id exist in table */
+
+      if(!is_null($User)){
+
+        $input = $request->all();
+        $name = $input['name'];
+
+        User::where('uuidx',$request->uuid)->update(
+         array(
+                 'name' => $name,
+              )
+         );
+
+
+          $data = array('msg' => 'Updated successfully !! ', 'success' => true);
+          echo json_encode($data);
+
+    }else{
+
+        $data = array('msg' => 'User Not Found !! ', 'error' => true);
+        echo json_encode($data);
+    }
+}
+
     public function getAuthenticatedUser()
     {
         try {

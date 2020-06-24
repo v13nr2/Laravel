@@ -28,8 +28,13 @@ class UserController extends Controller
 
         //$user = DB::table('users')->get();
         $user = DB::table('users')->select('uuidx as uuid', 'name', 'email')->where('email', request()->email)->first();
+        $grup = DB::select('SELECT B.name AS namagroup FROM nng_users_to_group A 
+                            LEFT JOIN nng_group B ON B.id = A.group_id 
+                            LEFT JOIN users C ON C.id = A.user_id
+                            WHERE C.email = "'.request()->email.'" ORDER BY C.id ASC LIMIT 1');
         $res = array(
             'data'  => $user,
+            'grup'  => $grup,
             'token' => compact('token')
         );
         return response()->json($res, 200);
@@ -67,7 +72,8 @@ class UserController extends Controller
             'username' => $request->get('username'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
-            'uuidx'  => $unik
+            'uuidx'  => $unik,
+            'refferal_link' => $request->get('referal_link'),
         ]);
 
         $token = JWTAuth::fromUser($user);
@@ -93,21 +99,15 @@ public function update(Request $request)
 
  /* Called Validator Method For Validation */  
    $validation = $this->validator($request->all());
-
-
     $User = User::where('uuidx',request()->uuid)->first(); /* Check id exist in table */
-    
     //$id2 = Str::slug('6f43adf8 7d65 4f8c 8d09 5cb714327139');
 
     if(!is_null($User)){
-
         User::where('uuidx',$request->get("uuid"))->update(
          array(
                  'name' => $request->get("name"),
               )
          );
-
-
           $data = array('msg' => 'Updated successfully !! ', 'success' => true);
           echo json_encode($data);
 
